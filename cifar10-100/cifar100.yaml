@@ -1,0 +1,51 @@
+epochs: 400
+time_step: 4
+layer: 4
+dim: 384
+num_heads: 12
+patch_size: 4
+mlp_ratio: 4
+
+data_dir: ''
+dataset: torch/cifar100
+num_classes: 100
+img_size: 32
+mean:
+    - 0.5071
+    - 0.4867
+    - 0.4408
+std:
+    - 0.2675
+    - 0.2565
+    - 0.2761
+crop_pct: 1.0
+scale:
+    - 1.0
+    - 1.0
+ratio: [1.0,1.0]
+color_jitter: 0.
+train_interpolation: bicubic
+aa: rand-m9-n1-mstd0.4-inc1
+mixup: 0.75
+
+mixup_off_epoch: 250
+mixup_prob: 1.0
+mixup_mode: batch
+mixup_switch_prob: 0.5
+cutmix: 0.5
+reprob: 0.25
+remode: const
+amp: True
+batch_size: 64 #64
+val_batch_size: 64 #64
+lr: 1.5e-3 
+min_lr: 1e-5
+sched: cosine
+weight_decay: 0.06
+cooldown_epochs: 10
+warmup_epochs: 20
+warmup_lr: 0.00001
+opt: adamw
+smoothing: 0.1
+workers: 4
+seed: 50425

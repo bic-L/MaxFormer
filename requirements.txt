@@ -1,0 +1,13 @@
+timm==0.6.12
+numpy<2.0.0
+Pillow==9.2.0
+PyYAML==6.0
+setuptools==59.8.0
+spikingjelly==0.0.0.0.12
+torch
+torchvision
+torchaudio
+einops==0.7.0
+huggingface-hub==0.24.6
+opencv-python==4.8.1.78
+wandb==0.16.0
