@@ -4,7 +4,7 @@ Spiking Transformers Need High Frequency Information: [[Paper]](https://arxiv.or
   
 ### Summary
 
-This paper explains why LIF performs better than IF from a frequency domain perspective, that is, LIF neurons can retain more high-frequency information than IF neurons. Notably, our Max-Former (63.99 M) hits the top-1 accuracy of 82.39% on ImageNet, showing a +7.58% improvement over Spikformer with comparable model size (74.81%, 66.34 M). On cifar10/100, cifar10-dvs, we achieved 97.04%/82.65% and 84.2% performance, respectively. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning.
+This paper explains why LIF performs better than IF from a frequency domain perspective, that is, LIF neurons can retain more high-frequency information than IF neurons. Notably, our Max-Former (63.99 M) hits the top-1 accuracy of **82.39%** on ImageNet, showing a **+7.58%** improvement over Spikformer with comparable model size (74.81%, 66.34 M). On cifar10/100, cifar10-dvs, we achieved **97.04%/82.65%** and **84.2%** performance, respectively. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning.
 
 ### Implementation
 
