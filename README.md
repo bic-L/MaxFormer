@@ -8,7 +8,7 @@ This paper shows that spiking neurons are low-pass filters. By restoring high-fr
 
 ### Implementation
 
-This repository include all the patch embeding and token mixing strategies listed in our [[Paper]](https://arxiv.org/abs/2505.18608). Code for QKFormer with membrane shortcut and SSA-DWC which we did not discuss in detail in the paper can be found in ``mixer_hub.py``.
+This repository includes all the patch embedding and token mixing strategies listed in our [[Paper]](https://arxiv.org/abs/2505.18608). Code for token mixing strategies can be found in ``mixer_hub.py``, including SSA-DWC that we did not discuss in detail in the paper. Patch embedding strategies can be found in ``embedding_hub.py``.
 
 #### Requirement:
 
