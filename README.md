@@ -1,6 +1,6 @@
-## Spiking Transformers Need High Frequency Information
+## Spiking Neural Networks Need High-Frequency Information
 
-Spiking Transformers Need High Frequency Information: [[Paper]](https://arxiv.org/abs/2505.18608). 
+Spiking Neural Networks Need High-Frequency Information: [[Paper]](https://arxiv.org/abs/2505.18608). 
   
 ### Summary
 
