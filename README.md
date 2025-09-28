@@ -4,7 +4,9 @@
   
 ### Summary
 
-This paper shows that spiking neurons are low-pass filters. By restoring high-frequency information, our Max-Former (63.99 M) hits the top-1 accuracy of **82.39%** on ImageNet, showing a **+7.58%** improvement over Spikformer with comparable model size (74.81%, 66.34 M). On cifar10/100, cifar10-dvs, we achieved **97.04%/82.65%** and **84.2%** performance, respectively. This paper also explains why LIF performs better than IF from a frequency domain perspective, that is, LIF neurons can retain more high-frequency information than IF neurons. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning.
+This paper shows that spiking neurons are low-pass filters. By restoring high-frequency information, our Max-Former (63.99 M) hits the top-1 accuracy of **82.39%** on ImageNet, showing a **+7.58%** improvement over Spikformer with comparable model size (74.81%, 66.34 M). On cifar10/100, cifar10-dvs, we achieved **97.04%/82.65%** and **84.2%** performance, respectively. Similarly, on MS-ResNet, we achieve performance improvements of +1.75% on CIFAR-10 and +4.74% on CIFAR-100 by simply adding a single Max-Pooling operation (this modification has not yet been included in the arXiv version). 
+
+This paper also explains why LIF performs better than IF from a frequency domain perspective, that is, LIF neurons can retain more high-frequency information than IF neurons. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning.
 
 ### Implementation
 
