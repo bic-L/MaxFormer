@@ -10,7 +10,7 @@ from torchvision import transforms
 import math
 from torch.cuda import amp
 import utils
-import model as model
+import max_former as model
 from spikingjelly.clock_driven import functional
 from spikingjelly.datasets import cifar10_dvs
 from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
@@ -32,6 +32,7 @@ torch.backends.cudnn.enable =True
 
 import numpy as np
 
+
 def parse_args():
     import argparse
     
@@ -41,13 +42,11 @@ def parse_args():
 
     parser = argparse.ArgumentParser(description='PyTorch Classification Training')
 
-    parser.add_argument('--model', default='swformer', help='model')
+    parser.add_argument('--model', default='max_former', help='model')
     parser.add_argument('--dataset', default='cifar10dvs', help='dataset')
     parser.add_argument('--num-classes', type=int, default=10, metavar='N',
                         help='number of label classes (default: 10)')
-    parser.add_argument('--flblocks', type=int, default=4, metavar='number of frequency learner splitting blocks',
-                        help='frequency learner splitting blocks (default: 4)')
-    parser.add_argument('--data-path', default='/hpc2hdd/home/yfang870/dataset/CIFAR10DVS', help='dataset')
+    parser.add_argument('--data-path', default='', help='dataset')
     parser.add_argument('--device', default='cuda:0', help='device')
     parser.add_argument('-b', '--batch-size', default=16, type=int)
     parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
@@ -173,6 +172,10 @@ except ImportError:
     has_wandb = False
 
 
+#os.environ["WANDB_API_KEY"] = ""
+#os.environ["WANDB_MODE"] = "offline"
+
+
 
 def split_to_train_test_set(train_ratio: float, origin_dataset: torch.utils.data.Dataset, num_classes: int, random_split: bool = False):
     '''
@@ -257,7 +260,7 @@ def train_one_epoch(model, criterion, optimizer, data_loader, device, epoch, pri
             optimizer.step()
 
         functional.reset_net(model)
-        output = output.mean(0)
+
         if mixup_fn is not None:
             acc1, acc5 = utils.accuracy(output, target_for_compu_acc, topk=(1, 5))
         else:
@@ -288,7 +291,7 @@ def evaluate(model, criterion, data_loader, device, print_freq=100, header='Test
             image = image.to(device, non_blocking=True)
             target = target.to(device, non_blocking=True)
             image = image.float()
-            output = model(image).mean(0)
+            output = model(image)
 
             loss = criterion(output, target)
             functional.reset_net(model)
@@ -337,7 +340,7 @@ def load_data(dataset, dataset_dir, distributed, T):
 def main(args):
     if args.log_wandb:
         if has_wandb:
-                wandb.init(project=args.dataset , 
+                wandb.init(project=args.dataset, 
                         name = args.experiment,
                         entity="spikingtransformer",
                         config=args)
@@ -393,10 +396,9 @@ def main(args):
         pin_memory=True)
 
     model = create_model(
-        'swformer',
-        patch_size=16, embed_dims=args.dim, mlp_ratios=4,
-        in_channels=2, depths=2, drop_rate=0.,
-        FL_blocks = args.flblocks, num_classes=args.num_classes, T = args.T
+        args.model, in_channels=2, num_classes=args.num_classes,
+        embed_dims=args.dim, mlp_ratios=1.0,
+        depths=2, T = args.T
     )
     print("Creating model")
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)

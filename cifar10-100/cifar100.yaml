@@ -27,11 +27,11 @@ color_jitter: 0.
 train_interpolation: bicubic
 aa: rand-m9-n1-mstd0.4-inc1
 mixup: 0.75
-
 mixup_off_epoch: 250
 mixup_prob: 1.0
 mixup_mode: batch
 mixup_switch_prob: 0.5
+model: max_former
 cutmix: 0.5
 reprob: 0.25
 remode: const

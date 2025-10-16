@@ -6,11 +6,11 @@ cutmix: 1.0
 data_dir: ''
 dataset: imagenet
 input_size: 224
-min_lr: 1e-6
-mixup: 0.4
+min_lr: 0.25e-5
+mixup: 0.25
 mixup_prob: 0.5
-model: maxformer_10_512
-blr: 0.0012
+model: maxformer_10_384
+blr: 0.00135
 seed: 42
-time_step: 1
+time_step: 4
 warmup:epochs: 5

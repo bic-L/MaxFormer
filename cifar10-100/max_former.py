@@ -1,12 +1,9 @@
 import torch
 import torch.nn as nn
 from spikingjelly.clock_driven.neuron import MultiStepLIFNode
-from timm.models.layers import to_2tuple, trunc_normal_, DropPath
+from timm.models.layers import  trunc_normal_
 from timm.models.registry import register_model
 from timm.models.vision_transformer import _cfg
-import torch.nn.functional as F
-from functools import partial
-import time
 from mixer_hub import *
 from embedding_hub import *
 
@@ -27,8 +24,7 @@ class Max_Former(nn.Module):
                                     embed_dims=embed_dims // 4)
 
         stage1 = nn.ModuleList([Block_identity(
-            dim=embed_dims//4, mlp_ratio=mlp_ratios,
-            drop=drop_rate)
+            dim=embed_dims//4, mlp_ratio=mlp_ratios)
             for j in range(1)])
         
         
@@ -36,9 +32,8 @@ class Max_Former(nn.Module):
                                     embed_dims=embed_dims // 2)
         
 
-        stage2 = nn.ModuleList([Block_dwc_strong_high3(
-            dim=embed_dims//2, mlp_ratio=mlp_ratios,
-            drop=drop_rate)
+        stage2 = nn.ModuleList([Block_DWC3(
+            dim=embed_dims//2, mlp_ratio=mlp_ratios,)
             for j in range(1)])
 
         patch_embed3 = Embed_Max(in_channels=embed_dims // 2,
@@ -46,8 +41,7 @@ class Max_Former(nn.Module):
 
         stage3 = nn.ModuleList([Block_SSA(
             dim=embed_dims // 1, mlp_ratio=mlp_ratios,
-            num_heads = 8,
-            drop=drop_rate)
+            num_heads = 8,)
             for j in range(2)])
 
         setattr(self, f"patch_embed1", patch_embed1)
@@ -114,7 +108,7 @@ def max_former(pretrained= False, pretrained_cfg=None, **kwargs):
 
 if __name__ == '__main__':
     model = Max_Former(
-        patch_size=16, embed_dims=384,  mlp_ratios=4,
+        embed_dims=384,  mlp_ratios=4,
         in_channels=3, num_classes=10,  depths=4
     ).cuda()
 

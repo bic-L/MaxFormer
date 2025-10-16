@@ -40,7 +40,7 @@ from timm.optim import create_optimizer_v2, optimizer_kwargs
 from timm.scheduler import create_scheduler
 from timm.utils import ApexScaler, NativeScaler
 
-import model
+import max_former
 try:
     from apex import amp
     from apex.parallel import DistributedDataParallel as ApexDDP
@@ -64,6 +64,10 @@ try:
 except ImportError:
     has_wandb = False
 
+
+#os.environ["WANDB_API_KEY"] = ""
+#os.environ["WANDB_MODE"] = "offline"
+
 torch.backends.cudnn.benchmark = True
 _logger = logging.getLogger('train')
 # The first arg parser parses out only the --config argument, this argument is used to
@@ -75,14 +79,12 @@ parser.add_argument('-c', '--config', default='', type=str, metavar='FILE',
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 
 # Model detail
-parser.add_argument('--model', default='swformer', type=str, metavar='MODEL',
+parser.add_argument('--model', default='max_former', type=str, metavar='MODEL',
                     help='Name of model to train (default: "countception"')
 parser.add_argument('-T', '--time-step', type=int, default=4, metavar='time',
                     help='simulation time step of spiking neuron (default: 4)')
 parser.add_argument('-L', '--layer', type=int, default=4, metavar='layer',
                     help='model layer (default: 4)')
-parser.add_argument('--flblocks', type=int, default=4, metavar='number of frequency learner splitting blocks',
-                    help='frequency learner splitting blocks (default: 4)')
 parser.add_argument('--num-classes', type=int, default=None, metavar='N',
                     help='number of label classes (Model default if None)')
 parser.add_argument('--img-size', type=int, default=None, metavar='N',
@@ -99,7 +101,7 @@ parser.add_argument('--patch-size', type=int, default=None, metavar='N',
 parser.add_argument('--mlp-ratio', type=int, default=None, metavar='N',
                     help='expand ration of embedding dimension in MLP block')
 # Dataset / Model parameters
-parser.add_argument('-data-dir', metavar='DIR',default="",
+parser.add_argument('--data-dir', metavar='DIR',default="",
                     help='path to dataset')
 parser.add_argument('--dataset', '-d', metavar='NAME', default='torch/cifar100',
                     help='dataset type (default: ImageFolder/ImageTar if empty)')
@@ -323,7 +325,7 @@ def main():
 
     if args.log_wandb:
         if has_wandb:
-                wandb.init(project="0320_cifar100" , 
+                wandb.init(project=args.dataset , 
                         name = args.experiment,
                         entity="spikingtransformer",
                         config=args)
@@ -358,10 +360,9 @@ def main():
     random_seed(args.seed, int(args.rank))
 
     model = create_model(
-        'swformer',
-        img_size_h=args.img_size, img_size_w=args.img_size, patch_size=args.patch_size,
-        in_channels=3, num_classes=args.num_classes, embed_dims=args.dim, drop_rate=0., 
-        FL_blocks = args.flblocks, mlp_ratios=args.mlp_ratio, depths=args.layer, T=args.time_step, 
+        args.model, in_channels=3, num_classes=args.num_classes, 
+        embed_dims=args.dim,  mlp_ratios=args.mlp_ratio, drop_rate=0., 
+        depths=args.layer, T=args.time_step, 
     )
     print("Creating model")
     n_parameters = sum(p.numel() for p in model.parameters() if p.requires_grad)

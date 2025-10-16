@@ -5,7 +5,7 @@ batch_size: 16
 cooldown_epochs: 10
 cutmix: 0.1
 cutmix_minmax: null
-data_path: '/hpc/home/connect.yfang870/CIFAR10DVS'
+data_path: ''
 dataset: cifar10dvs
 decay_epochs: 20
 decay_rate: 0.1
