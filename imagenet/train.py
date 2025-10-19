@@ -31,7 +31,8 @@ import yaml
 
 from timm.utils import update_summary, random_seed, CheckpointSaver
 
-import max_former
+from max_former import maxformer
+from ms_qkformer import ms_qkformer
 import wandb
 
 #os.environ["WANDB_API_KEY"] = ""

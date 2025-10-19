@@ -10,7 +10,9 @@ from torchvision import transforms
 import math
 from torch.cuda import amp
 import utils
-import max_former as model
+import max_former
+import ms_qkformer
+
 from spikingjelly.clock_driven import functional
 from spikingjelly.datasets import cifar10_dvs
 from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
@@ -56,19 +58,8 @@ def parse_args():
     parser.add_argument('--output-dir', default='./logs', help='path where to save')
     parser.add_argument('--resume', default='', help='resume from checkpoint')
 
-    parser.add_argument(
-        "--sync-bn",
-        dest="sync_bn",
-        help="Use sync batch norm",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--test-only",
-        dest="test_only",
-        # default=True,
-        help="Only test the model",
-        action="store_true",
-    )
+    parser.add_argument("--sync-bn", dest="sync_bn", help="Use sync batch norm", action="store_true", )
+    parser.add_argument( "--test-only", dest="test_only", help="Only test the model", action="store_true",)
 
     # Mixed precision training parameters
     parser.add_argument('--amp', default=True, action='store_true',

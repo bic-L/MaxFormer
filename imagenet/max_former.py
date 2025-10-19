@@ -8,6 +8,7 @@ from spikingjelly.clock_driven.neuron import (
 from mixer_hub import *
 from embedding_hub import *
 
+__all__ = ['max_former']
 
 class Max_Former(nn.Module):
     def __init__(

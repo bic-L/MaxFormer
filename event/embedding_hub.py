@@ -96,6 +96,28 @@ class Embed_Orig(nn.Module):
         
         return x
 
+class Embed_1Max(nn.Module): # PatchEmbeddingStage of QKFormer
+    def __init__(self, in_channels=2, embed_dims=256):
+        super().__init__()
+        
+        self.embed1 = Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
+        self.max_embed1 = Max_Embed(in_channels=embed_dims, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
+        self.embed2 = Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=1, stride=2, padding=0, shortcut = True)
+ 
+    def forward(self, x):
+        T, B, C, H, W = x.shape #T, B, C, H, W
+
+        x, x_feat = self.embed1(x, dual = True)
+        x = x.reshape(T, B, -1, H, W).contiguous() #T, B, 2C, H//2, W/2
+        
+        x = self.max_embed1(x)
+
+        x_feat = self.embed2(x_feat) #input must be spiking signals when shortcut is True
+        
+        x = (x + x_feat).reshape(T, B, -1, H//2, W//2).contiguous() # membrane shortcut
+
+        return x
+
 class Embed_Max(nn.Module):
     def __init__(self, in_channels=2, embed_dims=256):
         super().__init__()
@@ -151,29 +173,6 @@ class Embed_Max_plus(nn.Module): # for neuromorphic datasets with input size of 
         x_feat = self.embed1(x_feat) #input must be spiking signals when shortcut is True
         
         x = (x + x_feat).reshape(T, B, -1, H//8, W//8).contiguous() # membrane shortcut
-
-        return x
-    
-    
-class Embed_1Max(nn.Module): # PatchEmbeddingStage of QKFormer
-    def __init__(self, in_channels=2, embed_dims=256):
-        super().__init__()
-        
-        self.max_embed1 = Max_Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
-        self.embed1 = Embed(in_channels=embed_dims, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
-        self.embed2 = Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=1, stride=2, padding=0, shortcut = True)
- 
-    def forward(self, x):
-        T, B, C, H, W = x.shape #T, B, C, H, W
-
-        x, x_feat = self.max_embed1(x)
-        x = x.reshape(T, B, -1, H//2, W//2).contiguous() #T, B, 2C, H//2, W/2
-        
-        x = self.embed1(x)
-
-        x_feat = self.embed2(x_feat) #input must be spiking signals when shortcut is True
-        
-        x = (x + x_feat).reshape(T, B, -1, H//2, W//2).contiguous() # membrane shortcut
 
         return x
     

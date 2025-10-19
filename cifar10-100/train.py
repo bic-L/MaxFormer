@@ -41,6 +41,7 @@ from timm.scheduler import create_scheduler
 from timm.utils import ApexScaler, NativeScaler
 
 import max_former
+import ms_qkformer
 try:
     from apex import amp
     from apex.parallel import DistributedDataParallel as ApexDDP

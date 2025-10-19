@@ -1,7 +1,8 @@
+import torch
 import torch.nn as nn
 from spikingjelly.clock_driven.neuron import MultiStepLIFNode
 
-class MLP(nn.Module):
+class S_MLP(nn.Module):
     def __init__(self, in_features, hidden_features=None, out_features=None):
         super().__init__()
         out_features = out_features or in_features
@@ -35,6 +36,84 @@ class MLP(nn.Module):
         x = x + identity
         return x
 
+
+
+class Block_QKA(nn.Module):
+    def __init__(
+        self,
+        dim,
+        num_heads,
+        mlp_ratio=4.0
+    ):
+        super().__init__()
+        self.attn = Token_QK_Attention(
+            dim,
+            num_heads=num_heads,
+        )
+        mlp_hidden_dim = int(dim * mlp_ratio)
+        self.mlp = S_MLP(
+            in_features=dim,
+            hidden_features=mlp_hidden_dim,
+        )
+
+    def forward(self, x):
+        x = self.attn(x)
+        x = self.mlp(x)
+        return x
+    
+class Token_QK_Attention(nn.Module):
+    def __init__(self, dim, num_heads=8):
+        super().__init__()
+        assert dim % num_heads == 0, f"dim {dim} should be divided by num_heads {num_heads}."
+
+        self.dim = dim
+        self.num_heads = num_heads
+
+        self.q_conv = nn.Conv1d(dim, dim, kernel_size=1, stride=1, bias=False)
+        self.q_bn = nn.BatchNorm1d(dim)
+        self.q_lif = MultiStepLIFNode(tau=2.0, detach_reset=True, backend='cupy')
+
+        self.k_conv = nn.Conv1d(dim, dim, kernel_size=1, stride=1, bias=False)
+        self.k_bn = nn.BatchNorm1d(dim)
+        self.k_lif = MultiStepLIFNode(tau=2.0, detach_reset=True, backend='cupy')
+
+        self.attn_lif = MultiStepLIFNode(tau=2.0, v_threshold=0.5, detach_reset=True, backend='cupy')
+
+        self.proj_conv = nn.Conv1d(dim, dim, kernel_size=1, stride=1)
+        self.proj_bn = nn.BatchNorm1d(dim)
+        self.proj_lif = MultiStepLIFNode(tau=2.0, detach_reset=True, backend='cupy')
+
+
+    def forward(self, x):
+        T, B, C, H, W = x.shape
+
+        identity = x
+        x = self.proj_lif(x)
+        x = x.flatten(3)
+        T, B, C, N = x.shape
+        x_for_qkv = x.flatten(0, 1)
+
+        q_conv_out = self.q_conv(x_for_qkv)
+        q_conv_out = self.q_bn(q_conv_out).reshape(T, B, C, N)
+        q_conv_out = self.q_lif(q_conv_out)
+        q = q_conv_out.unsqueeze(2).reshape(T, B, self.num_heads, C // self.num_heads, N)
+
+        k_conv_out = self.k_conv(x_for_qkv)
+        k_conv_out = self.k_bn(k_conv_out).reshape(T, B, C, N)
+        k_conv_out = self.k_lif(k_conv_out)
+        k = k_conv_out.unsqueeze(2).reshape(T, B, self.num_heads, C // self.num_heads, N)
+
+        q = torch.sum(q, dim = 3, keepdim = True)
+        attn = self.attn_lif(q)
+        x = torch.mul(attn, k)
+
+        x = x.flatten(2, 3) #T, B, C, N
+        x = self.proj_bn(self.proj_conv(x.flatten(0, 1))).reshape(T, B, C, H, W) #T*B, C, N --> T, B, C, H, W
+        
+        x = x + identity
+        
+        return x
+    
 class SSA_dwc(nn.Module):
     def __init__(self, dim, num_heads=8):
         super().__init__()
@@ -117,7 +196,7 @@ class Block_SSA_dwc(nn.Module):
             num_heads=num_heads,
         )
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.attn(x)
@@ -196,7 +275,7 @@ class Block_SSA(nn.Module):
             num_heads=num_heads,
         )
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.attn(x)
@@ -219,7 +298,7 @@ class Block_Max(nn.Module):
         super().__init__()
         self.mixer = Max_Mixer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.mixer(x) #T, B, C, H, W
@@ -242,7 +321,7 @@ class Block_Avg(nn.Module):
         super().__init__()
         self.mixer = Avg_Mixer(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.mixer(x) #T, B, C, H, W
@@ -262,7 +341,7 @@ class Block_identity(nn.Module):
         super().__init__()
         self.mixer = Mixer_identity(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.mixer(x) #T, B, C, H, W
@@ -294,7 +373,7 @@ class Block_DWC3(nn.Module):
         super().__init__()
         self.mixer = Mixer_DWC3(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.mixer(x) #T, B, C, H, W
@@ -326,7 +405,7 @@ class Block_DWC5(nn.Module):
         super().__init__()
         self.mixer = Mixer_DWC5(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.mixer(x) #T, B, C, H, W
@@ -358,7 +437,7 @@ class Block_DWC7(nn.Module):
         super().__init__()
         self.mixer = Mixer_DWC7(dim)
         mlp_hidden_dim = int(dim * mlp_ratio)
-        self.mlp = MLP(in_features=dim, hidden_features=mlp_hidden_dim)
+        self.mlp = S_MLP(in_features=dim, hidden_features=mlp_hidden_dim)
 
     def forward(self, x):
         x = self.mixer(x) #T, B, C, H, W

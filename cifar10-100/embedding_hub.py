@@ -11,17 +11,21 @@ class Embed(nn.Module):
         self.embed_bn = nn.BatchNorm2d(out_channels)
         self.shortcut = shortcut
 
-    def forward(self, x):
+    def forward(self, x, dual = False):
         #input : T, B, C, H, W
 
         if self.shortcut is False:
             x = self.embed_lif(x)
 
+        x_feat = x
         x = self.embed_conv(x.flatten(0, 1).contiguous())
         x = self.embed_bn(x)
-        
+
+        if dual:
+            return x, x_feat
         #output : T*B, C, H, W
-        return x
+        else:
+            return x
 
 
 class Max_Embed(nn.Module):
@@ -35,7 +39,7 @@ class Max_Embed(nn.Module):
 
         self.shortcut = shortcut
 
-    def forward(self, x):
+    def forward(self, x, dual = False):
         #input : T, B, C, H, W
 
         if self.shortcut is False:
@@ -46,8 +50,11 @@ class Max_Embed(nn.Module):
         x = self.embed_bn(x)
         x = self.maxpool(x)
 
+        if dual:
+            return x, x_feat
         #output : T*B, C, H, W
-        return x, x_feat
+        else:
+            return x
     
 class Avg_Embed(nn.Module):
     def __init__(self, in_channels=2, out_channels=256, kernel_size = 3, stride = 1, padding = 1, shortcut= False):
@@ -96,7 +103,28 @@ class Embed_Orig(nn.Module):
         x = (x + x_feat).reshape(T, B, -1, H, W).contiguous() # membrane shortcut
         
         return x
+    
+class Embed_1Max(nn.Module): # PatchEmbeddingStage of QKFormer
+    def __init__(self, in_channels=2, embed_dims=256):
+        super().__init__()
+        
+        self.embed1 = Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
+        self.max_embed1 = Max_Embed(in_channels=embed_dims, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
+        self.embed2 = Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=1, stride=2, padding=0, shortcut = True)
+ 
+    def forward(self, x):
+        T, B, C, H, W = x.shape #T, B, C, H, W
 
+        x, x_feat = self.embed1(x, dual = True)
+        x = x.reshape(T, B, -1, H, W).contiguous() #T, B, 2C, H//2, W/2
+        x = self.max_embed1(x)
+
+        x_feat = self.embed2(x_feat) #input must be spiking signals when shortcut is True
+        
+        x = (x + x_feat).reshape(T, B, -1, H//2, W//2).contiguous() # membrane shortcut
+
+        return x
+    
 class Embed_Max(nn.Module):
     def __init__(self, in_channels=2, embed_dims=256):
         super().__init__()
@@ -152,29 +180,6 @@ class Embed_Max_plus(nn.Module): # for neuromorphic datasets with input size of 
         x_feat = self.embed1(x_feat) #input must be spiking signals when shortcut is True
         
         x = (x + x_feat).reshape(T, B, -1, H//8, W//8).contiguous() # membrane shortcut
-
-        return x
-    
-    
-class Embed_1Max(nn.Module): # PatchEmbeddingStage of QKFormer
-    def __init__(self, in_channels=2, embed_dims=256):
-        super().__init__()
-        
-        self.max_embed1 = Max_Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
-        self.embed1 = Embed(in_channels=embed_dims, out_channels=embed_dims, kernel_size=3, stride=1, padding=1)
-        self.embed2 = Embed(in_channels=in_channels, out_channels=embed_dims, kernel_size=1, stride=2, padding=0, shortcut = True)
- 
-    def forward(self, x):
-        T, B, C, H, W = x.shape #T, B, C, H, W
-
-        x, x_feat = self.max_embed1(x)
-        x = x.reshape(T, B, -1, H//2, W//2).contiguous() #T, B, 2C, H//2, W/2
-        
-        x = self.embed1(x)
-
-        x_feat = self.embed2(x_feat) #input must be spiking signals when shortcut is True
-        
-        x = (x + x_feat).reshape(T, B, -1, H//2, W//2).contiguous() # membrane shortcut
 
         return x
     

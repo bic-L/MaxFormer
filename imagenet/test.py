@@ -11,19 +11,18 @@ from pathlib import Path
 
 import torch
 import torch.backends.cudnn as cudnn
-from torch.utils.tensorboard import SummaryWriter
 from timm.models import create_model
 
 from utils import *
 from utils import evaluate
 import misc
-from misc import NativeScalerWithGradNormCount as NativeScaler
 import os
 import yaml
 
 from timm.utils import random_seed
 
 import max_former
+import ms_qkformer
 import wandb
 
 #os.environ["WANDB_API_KEY"] = ""

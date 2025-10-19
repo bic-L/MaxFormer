@@ -36,7 +36,6 @@ class S_MLP(nn.Module):
         x = x + identity
         return x
 
-
 class Block_QKA(nn.Module):
     def __init__(
         self,
@@ -111,7 +110,6 @@ class Token_QK_Attention(nn.Module):
         
         x = x + identity
         
-
         return x
 
 
