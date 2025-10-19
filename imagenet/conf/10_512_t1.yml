@@ -3,7 +3,7 @@ accum_iter: 1 # actual batch = accum_iter * batch_size * num_gpus
 batch_size: 64
 epochs: 200
 cutmix: 1.0
-data_dir: ''
+data_path: ''
 dataset: imagenet
 input_size: 224
 min_lr: 1e-6
