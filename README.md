@@ -31,9 +31,11 @@ This repository includes all the patch embedding and token mixing strategies lis
 
 #### Running the code
 
-Please check the bash file in each folder (cifar10-100, event). 
+Please check the bash file in each folder (cifar10-100, event, imagenet).
 
-Currently, this work is partially open sourced.  Code/checkpoints for ImageNet will be available in a few weeks once we finish cleaning up the code.
+It can be run directly through the provided `.sh` file. The README will be updated accordingly within this week.
+
+
 
 Code for visualization/energy consumption will be uploaded upon request. 
 
