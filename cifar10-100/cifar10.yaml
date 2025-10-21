@@ -6,7 +6,7 @@ num_heads: 12
 patch_size: 4
 mlp_ratio: 4
 
-data_dir: ''
+data_path: ''
 dataset: torch/cifar10
 num_classes: 10
 img_size: 32
