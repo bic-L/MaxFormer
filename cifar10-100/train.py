@@ -42,6 +42,8 @@ from timm.utils import ApexScaler, NativeScaler
 
 import max_former
 import ms_qkformer
+from max_resnet import max_resnet18
+
 try:
     from apex import amp
     from apex.parallel import DistributedDataParallel as ApexDDP
@@ -360,6 +362,14 @@ def main():
 
     random_seed(args.seed, int(args.rank))
 
+    if 'max_resnet18' in args.model:
+        model = max_resnet18(num_classes = args.num_classes, T=args.time_step)
+    else:
+        model = create_model(
+            args.model, in_channels=3, num_classes=args.num_classes, 
+            embed_dims=args.dim,  mlp_ratios=args.mlp_ratio, drop_rate=0., 
+            depths=args.layer, T=args.time_step, 
+        )
     model = create_model(
         args.model, in_channels=3, num_classes=args.num_classes, 
         embed_dims=args.dim,  mlp_ratios=args.mlp_ratio, drop_rate=0., 
