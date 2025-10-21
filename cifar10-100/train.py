@@ -104,7 +104,7 @@ parser.add_argument('--patch-size', type=int, default=None, metavar='N',
 parser.add_argument('--mlp-ratio', type=int, default=None, metavar='N',
                     help='expand ration of embedding dimension in MLP block')
 # Dataset / Model parameters
-parser.add_argument('--data-dir', metavar='DIR',default="",
+parser.add_argument('--data-path', metavar='DIR',default="",
                     help='path to dataset')
 parser.add_argument('--dataset', '-d', metavar='NAME', default='torch/cifar100',
                     help='dataset type (default: ImageFolder/ImageTar if empty)')
@@ -465,10 +465,10 @@ def main():
     # create the train and eval datasets
     dataset_train = create_dataset(
         args.dataset,
-        root=args.data_dir, split=args.train_split, is_training=True,
+        root=args.data_path, split=args.train_split, is_training=True,
         batch_size=args.batch_size, repeats=args.epoch_repeats)
     dataset_eval = create_dataset(
-        args.dataset, root=args.data_dir, split=args.val_split, is_training=False, batch_size=args.batch_size)
+        args.dataset, root=args.data_path, split=args.val_split, is_training=False, batch_size=args.batch_size)
 
     # setup mixup / cutmix
     collate_fn = None
