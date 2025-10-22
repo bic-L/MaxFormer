@@ -8,7 +8,7 @@ This paper shows that spiking neurons are low-pass filters and also explains why
 
  • We provide the first theoretical proof that spiking neurons inherently act as low-pass filters at the network level, revealing their tendency to suppress high-frequency features.
  
- • We propose Max-Former, which restores high-frequency information in Spiking Transformers via two lightweight modules: extra Max-Pool in patch embedding and Depth-Wise Convolution (DWC) in place of early-stage self-attention.
+ • We propose Max-Former, which restores high-frequency information in Spiking Transformers via two lightweight modules: extra Max-Pool in patch embedding and Depth-Wise Convolution in place of early-stage self-attention.
  
  • Restoring high-frequency information significantly improves performance while saving energy cost. On ImageNet, Max-Former achieves 82.39% top-1 accuracy (+7.58% over Spikformer) with 30% energy consumption and lower parameter count (63.99M vs. 66.34M).
  
