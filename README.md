@@ -4,9 +4,15 @@
   
 ### Summary
 
-This paper shows that spiking neurons are low-pass filters. By restoring high-frequency information, our Max-Former (63.99 M) hits the top-1 accuracy of **82.39%** on ImageNet, showing a **+7.58%** improvement over Spikformer with comparable model size (74.81%, 66.34 M). On cifar10/100, cifar10-dvs, we achieved **97.04%/82.65%** and **84.2%** performance, respectively. Similarly, on MS-ResNet, we achieve performance improvements of **+1.75%** on CIFAR-10 and **+4.74%** on CIFAR-100 by simply adding a single Max-Pooling operation (this modification has not yet been included in the arXiv version). 
+This paper shows that spiking neurons are low-pass filters and also explains why LIF performs better than IF from a frequency domain perspective. That is, LIF neurons can retain more high-frequency information than IF neurons. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning. The core contributions are:
 
-This paper also explains why LIF performs better than IF from a frequency domain perspective, that is, LIF neurons can retain more high-frequency information than IF neurons. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning.
+ • We provide the first theoretical proof that spiking neurons inherently act as low-pass filters at the network level, revealing their tendency to suppress high-frequency features.
+ 
+ • We propose Max-Former, which restores high-frequency information in Spiking Transformers via two lightweight modules: extra Max-Pool in patch embedding and Depth-Wise Convolution (DWC) in place of early-stage self-attention.
+ 
+ • Restoring high-frequency information significantly improves performance while saving energy cost. On ImageNet, Max-Former achieves 82.39% top-1 accuracy (+7.58% over Spikformer) with 30% energy consumption and lower parameter count (63.99M vs. 66.34M).
+ 
+ • Extending the insight beyond transformers, Max-ResNet-18 achieves state-of-the-art performance on convolution-based benchmarks: 97.17% on CIFAR-10 and 83.06% on CIFAR-100.
 
 ### Implementation
 
