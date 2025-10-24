@@ -1,7 +1,9 @@
 ## Spiking Neural Networks Need High-Frequency Information
 
 [Neurips 2025] Spiking Neural Networks Need High-Frequency Information: [[Paper]](https://arxiv.org/abs/2505.18608). 
-  
+
+TL;DR: The paper reveals that the performance gap between SNNs and ANNs stems not from information loss caused by binary spike activations, but from the intrinsic low-pass filtering of spiking neurons.
+
 ### Summary
 
 This paper shows that **spiking neurons are low-pass filters and also explains why LIF performs better than IF from a frequency domain perspective**. That is, LIF neurons can retain more high-frequency information than IF neurons. We hope this simple yet effective solution inspires future research to explore the distinctive nature of spiking neural networks, beyond the established practice in standard deep learning. The core contributions are:
