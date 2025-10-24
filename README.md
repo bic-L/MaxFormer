@@ -12,7 +12,7 @@ This paper shows that **spiking neurons are low-pass filters and also explains w
  
  • We propose **Max-Former**, which restores high-frequency information in Spiking Transformers via two lightweight modules: extra Max-Pool in patch embedding and Depth-Wise Convolution in place of early-stage self-attention.
  
- • Restoring high-frequency information significantly improves performance while saving energy cost. On ImageNet, **Max-Former#** achieves **82.39% top-1 accuracy (+7.58% over Spikformer) with 30% energy consumption and lower parameter count (63.99M vs. 66.34M).**
+ • Restoring high-frequency information significantly improves performance while saving energy cost. On ImageNet, **Max-Former** achieves **82.39% top-1 accuracy (+7.58% over Spikformer) with 30% energy consumption and lower parameter count (63.99M vs. 66.34M).**
  
  • Extending the insight beyond transformers, **Max-ResNet-18** achieves **state-of-the-art** performance on convolution-based benchmarks: **97.17% on CIFAR-10 and 83.06% on CIFAR-100.**
 
