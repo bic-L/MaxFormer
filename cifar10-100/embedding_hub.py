@@ -136,13 +136,13 @@ class Embed_Max(nn.Module):
     def forward(self, x):
         T, B, C, H, W = x.shape #T, B, C, H, W
 
-        x, x_feat = self.max_embed1(x)
+        x, x_feat = self.max_embed1(x, dual = True)
         x = x.reshape(T, B, -1, H//2, W//2).contiguous() #T, B, 2C, H//2, W/2
         
         x = self.embed1(x)
 
         #shortcut path
-        x_feat, _= self.max_embed2(x_feat) #input must be spiking signals when shortcut is True
+        x_feat, _= self.max_embed2(x_feat, dual = True) #input must be spiking signals when shortcut is True
         
         x = (x + x_feat).reshape(T, B, -1, H//2, W//2).contiguous() # membrane shortcut
 
