@@ -18,7 +18,8 @@ This paper shows that **spiking neurons are low-pass filters and also explains w
  
  • Extending the insight beyond transformers, **Max-ResNet-18** achieves **state-of-the-art** performance on convolution-based benchmarks: **97.17% on CIFAR-10 and 83.06% on CIFAR-100.**
 
-![](https://tc-cdn.processon.com/po/5ee316011e085326372368f3-68fcbbf7f7e145240c054076)
+![](https://github.com/user-attachments/assets/c1e6144b-fe5c-49d3-8d2b-a214ae3e024d)
+
 
 ### Implementation
 
