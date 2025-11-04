@@ -1,6 +1,6 @@
 ## Spiking Neural Networks Need High-Frequency Information
 
-[Neurips 2025] Spiking Neural Networks Need High-Frequency Information: [[Paper]](https://arxiv.org/abs/2505.18608). 
+[Neurips 2025] Spiking Neural Networks Need High-Frequency Information: [[Paper]](https://arxiv.org/abs/2505.18608). [[OpenReview]](https://openreview.net/forum?id=owNPAl7LNK)
 
 TL;DR: The paper reveals that the performance gap between SNNs and ANNs stems not from information loss caused by binary spike activations, but from the intrinsic low-pass filtering of spiking neurons.
 
