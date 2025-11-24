@@ -4,7 +4,8 @@
 
 **TL;DR: The paper reveals that the performance gap between SNNs and ANNs stems not from information loss caused by binary spike activations, but from the intrinsic low-pass filtering of spiking neurons.**
 
-<img width="1721" height="855" alt="image" src="https://github.com/user-attachments/assets/44e92ebb-530d-4486-a9da-37dcce5fcc8e" />
+<img width="1722" height="860" alt="image" src="https://github.com/user-attachments/assets/3d760878-5a70-44e5-b9ee-84a5289b0706" />
+
 
 ### Summary
 
