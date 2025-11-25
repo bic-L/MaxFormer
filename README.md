@@ -45,9 +45,7 @@ This repository includes all the patch embedding and token mixing strategies lis
 
 #### Running the code
 
-Please check the bash file in each folder (cifar10-100, event, imagenet).
-
-It can be run directly through the provided `.sh` file. The README will be updated accordingly within this week.
+Please check the bash file in each folder (cifar10-100, event, imagenet). It can be run directly through the provided `.sh` file. 
 
 
 
