@@ -41,7 +41,7 @@ patience_epochs: 10
 print_freq: 256
 resume: ''
 sched: cosine
-seed: 35307
+seed: 1779
 smoothing: 0.1
 start_epoch: 0
 sync_bn: false
