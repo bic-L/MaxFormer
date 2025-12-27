@@ -14,7 +14,7 @@ device: cuda:0
 dist_url: env://
 distributed: false
 epoch_repeats: 0.0
-epochs: 150
+epochs: 96
 experiment: ''
 flblocks: 16
 log_wandb: false
