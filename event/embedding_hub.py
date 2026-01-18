@@ -96,7 +96,7 @@ class Embed_Orig(nn.Module):
         
         return x
 
-class Embed_Orig_later(nn.Module): # PatchEmbeddingStage of QKFormer
+class Embed_Orig_later(nn.Module): # 
     def __init__(self, in_channels=2, embed_dims=256):
         super().__init__()
         
